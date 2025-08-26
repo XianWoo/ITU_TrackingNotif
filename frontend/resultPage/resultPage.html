@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Status Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="./resultPage.css">
+
+</head>
+<body>
+    <div class="itu-bar">
+        <img src="../../International_Telecommunication_Union_logo.svg.png" alt="ITU Logo" class="itu-logo" style="height: 10%; width: 10%;">
+    </div>
+    <header class="header">
+        <h1>Notice Status Tracker</h1>
+    </header>
+    <main class="main-container">
+        <section class="results-section">
+            <div id="notice-status-container">
+                <p>Status for Notice ID: <span id="notice-id-display">12345</span></p>
+                <div id="status-message" class="status-message success">✅ **Success:** Notice **12345** is finished. Last update: **2025-08-20**</div>
+<!--                <section id="timeline-section" class="timeline-section">-->
+<!--                    <h2>Timeline Status</h2>-->
+<!--                    <div class="timeline-container">-->
+<!--                        <canvas id="timelineChart"></canvas>-->
+<!--                    </div>-->
+<!--                </section>-->
+            </div>
+
+            <div id="results-table-section" class="table-section">
+                <h3>Search Result Summary</h3>
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>Notice ID</th>
+                            <th>Satellite Name</th>
+                            <th>Date of Receipt</th>
+                            <th>Date of Validation</th>
+                            <th>Date of Completion</th>
+                            <th>Pub</th>
+                            <th>ITU meeting to Approve</th>
+                            <th>Pub2</th>
+                            <th>Pub3</th>
+                            <th>Conclusion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12345</td>
+                            <td>name1_sdakj_@asj</td>
+                            <td>2025-01-02</td>
+                            <td>2025-06-27</td>
+                            <td>2025-08-20</td>
+                            <td>2025-01-02</td>
+                            <td>2025-06-27</td>
+                            <td>2025-08-20</td>
+                            <td>2025-06-27</td>
+                            <td>Finished</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+        <div style="margin-top: 20px;">
+            <a href="../mainPage.html" class="back-link">← Back to Search</a>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hardcodedDates = [
+                "2025-01-02",
+                "2025-06-27",
+                "2025-08-20"
+            ];
+            renderTimeline(hardcodedDates);
+        });
+
+        let timelineChart;
+        function renderTimeline(dates) {
+            const stages = dates.map((dateStr, index) => {
+                const date = new Date(dateStr);
+                let name = '';
+                if (index === 0) {
+                    name = 'Notice Recorded';
+                } else if (index === dates.length - 1) {
+                    name = 'Finished';
+                } else {
+                    name = `Stage ${index}`;
+                }
+                return { name, date };
+            });
+
+            const labels = stages.map(s => s.name);
+            const dataPoints = stages.map(s => s.date);
+
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+
+            if (timelineChart) {
+                timelineChart.destroy();
+            }
+
+            timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Notice Progress Timeline',
+                        data: dataPoints,
+                        borderColor: '#2D62B7',
+                        backgroundColor: 'rgba(45, 98, 183, 0.2)',
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#2D62B7',
+                        pointBorderColor: 'white',
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Notice Progress',
+                            font: {
+                                size: 18,
+                                weight: '600'
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: context => context[0].label,
+                                label: context => `Date: ${new Date(context.raw).toLocaleDateString()}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'MMM d'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: '#333333'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
